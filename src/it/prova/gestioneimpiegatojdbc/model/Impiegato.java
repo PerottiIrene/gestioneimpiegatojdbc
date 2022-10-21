@@ -1,6 +1,7 @@
  package it.prova.gestioneimpiegatojdbc.model;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 public class Impiegato {
 	private Long id;
@@ -10,6 +11,30 @@ public class Impiegato {
 	private Date dataNascita;
 	private Date dataAssunzione;
 	private Compagnia compagnia;
+	
+	public Impiegato(String nome, String cognome, String codiceFiscale, Date dataNascita, Date dataAssunzione,
+			Compagnia compagnia) {
+		super();
+		this.nome = nome;
+		this.cognome = cognome;
+		this.codiceFiscale = codiceFiscale;
+		this.dataNascita = dataNascita;
+		this.dataAssunzione = dataAssunzione;
+		this.compagnia = compagnia;
+	}
+
+	public Impiegato() {};
+	
+	public Impiegato(Long id, String nome, String cognome, String codiceFiscale, Date dataNascita,
+			Date dataAssunzione) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.cognome = cognome;
+		this.codiceFiscale = codiceFiscale;
+		this.dataNascita = dataNascita;
+		this.dataAssunzione = dataAssunzione;
+	}
 	
 	public Impiegato(Long id, String nome, String cognome, String codiceFiscale, Date dataNascita, Date dataAssunzione,
 			Compagnia compagnia) {
@@ -65,6 +90,13 @@ public class Impiegato {
 		this.compagnia = compagnia;
 	}
 	
-	
+	public String toString() {
+		String dataAssunzioneString = dataAssunzione != null ? new SimpleDateFormat("dd/MM/yyyy").format(dataAssunzione)
+				: " N.D.";
+		String dataNascitaString = dataNascita != null ? new SimpleDateFormat("dd/MM/yyyy").format(dataNascita)
+				: " N.D.";
+
+		return "impiegato [id=" + id + ", nome=" + nome + ", cognome=" + cognome + ", codiceFiscale=" + codiceFiscale + ", dataNascita=" + dataNascitaString +", dataAssunzione=" + dataAssunzioneString +"]";
+	}
 
 }
