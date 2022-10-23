@@ -195,14 +195,72 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 
 	@Override
 	public List<Compagnia> findAllByDataAssunzioneMaggioreDi(Date data) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (data == null)
+			throw new Exception("Valore di input non ammesso.");
+
+		Compagnia compagniaTemp = null;
+		Impiegato impiegatoTemp = null;
+		List<Compagnia> result = new ArrayList<>();
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select * from compagnia c inner join impiegato i on c.id=i.compagnia_id where i.dataassunzione > ?;")) {
+			ps.setDate(1, new java.sql.Date(data.getTime()));
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					compagniaTemp = new Compagnia();
+					compagniaTemp.setRagioneSociale(rs.getString("c.ragionesociale"));
+					compagniaTemp.setFatturatoAnnuo(rs.getInt("c.fatturatoannuo"));
+					compagniaTemp.setDataFondazione(rs.getDate("c.datafondazione"));
+					compagniaTemp.setId(rs.getLong("c.id"));
+					impiegatoTemp = new Impiegato();
+					impiegatoTemp.setNome(rs.getString("i.nome"));
+					impiegatoTemp.setCognome(rs.getString("i.cognome"));
+					impiegatoTemp.setCodiceFiscale(rs.getString("i.codicefiscale"));
+					impiegatoTemp.setDataNascita(rs.getDate("i.datanascita"));
+					impiegatoTemp.setDataAssunzione(rs.getDate("i.dataassunzione"));
+					impiegatoTemp.setId(rs.getLong("i.id"));
+					impiegatoTemp.setCompagnia(compagniaTemp);
+					result.add(compagniaTemp);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public List<Compagnia> findAllByRagioneSocialeContiene(String input) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+		if (input == null)
+			throw new Exception("Valore di input non ammesso.");
+		Compagnia compagniaTemp = null;
+		List<Compagnia> result = new ArrayList<>();
+		try (PreparedStatement ps = connection
+				.prepareStatement("select * from compagnia where ragionesociale like ?")) {
+
+			ps.setString(1, input + "%");
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					compagniaTemp = new Compagnia();
+					compagniaTemp.setRagioneSociale(rs.getString("ragionesociale"));
+					compagniaTemp.setFatturatoAnnuo(rs.getInt("fatturatoannuo"));
+					compagniaTemp.setDataFondazione(rs.getDate("datafondazione"));
+					compagniaTemp.setId(rs.getLong("id"));
+					result.add(compagniaTemp);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
